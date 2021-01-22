@@ -33,9 +33,9 @@ lists all packages available."""
     colors = ["cyan", "yellow", "green", "magenta", "blue"]
 
     def handle(self):
+        from cleo.io.null_io import NullIO
         from clikit.utils.terminal import Terminal
 
-        from poetry.io.null_io import NullIO
         from poetry.puzzle.solver import Solver
         from poetry.repositories.installed_repository import InstalledRepository
         from poetry.repositories.pool import Pool
@@ -141,7 +141,7 @@ lists all packages available."""
                 continue
 
             current_length = len(locked.pretty_name)
-            if not self._io.output.supports_ansi():
+            if not self._io.output.is_decorated():
                 installed_status = self.get_installed_status(locked, installed_repo)
 
                 if installed_status == "not-installed":
@@ -346,7 +346,7 @@ lists all packages available."""
                 )
 
     def _write_tree_line(self, io, line):
-        if not io.output.supports_ansi():
+        if not io.output.supports_utf8():
             line = line.replace("└", "`-")
             line = line.replace("├", "|-")
             line = line.replace("──", "-")
@@ -355,12 +355,12 @@ lists all packages available."""
         io.write_line(line)
 
     def init_styles(self, io):
-        from clikit.api.formatter import Style
+        from cleo.formatters.style import Style
 
         for color in self.colors:
-            style = Style(color).fg(color)
-            io.output.formatter.add_style(style)
-            io.error_output.formatter.add_style(style)
+            style = Style(color)
+            io.output.formatter.set_style(color, style)
+            io.error_output.formatter.set_style(color, style)
 
     def find_latest_package(self, package, include_dev):
         from clikit.io import NullIO

@@ -6,7 +6,7 @@ from contextlib import contextmanager
 from typing import List
 from typing import Optional
 
-from clikit.io import ConsoleIO
+from cleo.io.io import IO
 
 from poetry.core.packages import Package
 from poetry.core.packages.project_package import ProjectPackage
@@ -33,7 +33,7 @@ class Solver:
         pool,  # type: Pool
         installed,  # type: Repository
         locked,  # type: Repository
-        io,  # type: ConsoleIO
+        io,  # type: IO
         remove_untracked=False,  # type: bool
         provider=None,  # type: Optional[Provider]
     ):

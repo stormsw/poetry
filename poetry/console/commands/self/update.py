@@ -15,6 +15,7 @@ from gzip import GzipFile
 from cleo import argument
 from cleo import option
 
+from poetry.console.exceptions import PoetrySimpleConsoleException
 from poetry.core.packages import Dependency
 
 from ..command import Command
@@ -51,7 +52,7 @@ BAT = '@echo off\r\n{python_executable} "{poetry_bin}" %*\r\n'
 
 class SelfUpdateCommand(Command):
 
-    name = "update"
+    name = "self update"
     description = "Updates Poetry to the latest version."
 
     arguments = [argument("version", "The version to update to.", optional=True)]
@@ -245,9 +246,9 @@ class SelfUpdateCommand(Command):
         try:
             current.relative_to(self.home)
         except ValueError:
-            raise RuntimeError(
-                "Poetry was not installed with the recommended installer. "
-                "Cannot update automatically."
+            raise PoetrySimpleConsoleException(
+                "Poetry was not installed with the recommended installer, "
+                "so it cannot be updated automatically."
             )
 
     def _get_release_name(self, version):

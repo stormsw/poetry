@@ -1,6 +1,7 @@
 import logging
 import os
 import re
+import time
 import urllib.parse
 
 from contextlib import contextmanager
@@ -10,7 +11,7 @@ from typing import Any
 from typing import List
 from typing import Optional
 
-from clikit.ui.components import ProgressIndicator
+from cleo.ui.progress_indicator import ProgressIndicator
 
 from poetry.core.packages import Dependency
 from poetry.core.packages import DirectoryDependency
@@ -42,7 +43,10 @@ logger = logging.getLogger(__name__)
 
 
 class Indicator(ProgressIndicator):
-    pass
+    def _formatter_elapsed(self):
+        elapsed = time.time() - self._start_time
+
+        return "{:.1f}s".format(elapsed)
 
 
 class Provider:
@@ -772,7 +776,7 @@ class Provider:
 
     @contextmanager
     def progress(self):
-        if not self._io.output.supports_ansi() or self.is_debugging():
+        if not self._io.output.is_decorated() or self.is_debugging():
             self._io.write_line("Resolving dependencies...")
             yield
         else:

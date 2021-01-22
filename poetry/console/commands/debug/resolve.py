@@ -1,12 +1,13 @@
 from cleo import argument
 from cleo import option
+from cleo.io.outputs.output import Verbosity
 
 from ..init import InitCommand
 
 
 class DebugResolveCommand(InitCommand):
 
-    name = "resolve"
+    name = "debug resolve"
     description = "Debugs dependency resolution."
 
     arguments = [
@@ -28,9 +29,10 @@ class DebugResolveCommand(InitCommand):
     loggers = ["poetry.repositories.pypi_repository", "poetry.inspection.info"]
 
     def handle(self):
+        from cleo.io.null_io import NullIO
+
         from poetry.core.packages.project_package import ProjectPackage
         from poetry.factory import Factory
-        from poetry.io.null_io import NullIO
         from poetry.puzzle import Solver
         from poetry.repositories.pool import Pool
         from poetry.repositories.repository import Repository
@@ -49,14 +51,12 @@ class DebugResolveCommand(InitCommand):
             )
 
             # Silencing output
-            is_quiet = self.io.output.is_quiet()
-            if not is_quiet:
-                self.io.output.set_quiet(True)
+            verbosity = self.io.output.verbosity
+            self.io.output.set_verbosity(Verbosity.QUIET)
 
             requirements = self._determine_requirements(packages)
 
-            if not is_quiet:
-                self.io.output.set_quiet(False)
+            self.io.output.set_verbosity(verbosity)
 
             for constraint in requirements:
                 name = constraint.pop("name")
@@ -101,7 +101,7 @@ class DebugResolveCommand(InitCommand):
 
             return 0
 
-        table = self.table([], style="borderless")
+        table = self.table([], style="compact")
         rows = []
 
         if self.option("install"):
@@ -134,4 +134,4 @@ class DebugResolveCommand(InitCommand):
             rows.append(row)
 
         table.set_rows(rows)
-        table.render(self.io)
+        table.render()

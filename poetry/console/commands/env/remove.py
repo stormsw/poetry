@@ -5,7 +5,7 @@ from ..command import Command
 
 class EnvRemoveCommand(Command):
 
-    name = "remove"
+    name = "env remove"
     description = "Removes a specific virtualenv associated with the project."
 
     arguments = [

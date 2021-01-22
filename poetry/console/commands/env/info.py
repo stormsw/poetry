@@ -5,7 +5,7 @@ from ..command import Command
 
 class EnvInfoCommand(Command):
 
-    name = "info"
+    name = "env info"
     description = "Displays information about the current environment."
 
     options = [option("path", "p", "Only display the environment's path.")]

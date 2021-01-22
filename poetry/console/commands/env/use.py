@@ -5,7 +5,7 @@ from ..command import Command
 
 class EnvUseCommand(Command):
 
-    name = "use"
+    name = "env use"
     description = "Activates or creates a new virtualenv for the current project."
 
     arguments = [argument("python", "The python executable to use.")]

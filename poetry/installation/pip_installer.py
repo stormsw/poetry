@@ -4,7 +4,7 @@ import urllib.parse
 
 from subprocess import CalledProcessError
 
-from clikit.api.io import IO
+from cleo.io.io import IO
 
 from poetry.core.pyproject.toml import PyProjectTOML
 from poetry.repositories.pool import Pool
@@ -177,8 +177,9 @@ class PipInstaller(BaseInstaller):
         return name
 
     def install_directory(self, package):
+        from cleo.io.null_io import NullIO
+
         from poetry.factory import Factory
-        from poetry.io.null_io import NullIO
 
         if package.root_dir:
             req = (package.root_dir / package.source_url).as_posix()
