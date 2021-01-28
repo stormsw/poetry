@@ -316,13 +316,20 @@ def test_get_404_returns_none(http):
     assert repo._get("/foo") is None
 
 
-def test_get_4xx_and_5xx_raises(http):
-    endpoints = {"/{}".format(code): code for code in {401, 403, 500}}
+def test_get_5xx_raises(http):
+    endpoints = {"/{}".format(code): code for code in {500}}
     repo = MockHttpRepository(endpoints, http)
 
     for endpoint in endpoints:
         with pytest.raises(RepositoryError):
             repo._get(endpoint)
+
+def test_get_401_and_403_skipped(http):
+    endpoints = {"/{}".format(code): code for code in {401, 403}}
+    repo = MockHttpRepository(endpoints, http)
+
+    for endpoint in endpoints:
+        assert(repo._get(endpoint) is None)
 
 
 def test_get_redirected_response_url(http, monkeypatch):

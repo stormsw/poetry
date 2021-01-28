@@ -381,16 +381,16 @@ class LegacyRepository(PyPiRepository):
             response = self.session.get(url)
             if response.status_code == 404:
                 return
+            if response.status_code in (401, 403):
+                self._log(
+                    "Authorization error accessing {url}".format(url=response.url),
+                    level="warn",
+                )
+                return
             response.raise_for_status()
         except requests.HTTPError as e:
             raise RepositoryError(e)
 
-        if response.status_code in (401, 403):
-            self._log(
-                "Authorization error accessing {url}".format(url=response.url),
-                level="warn",
-            )
-            return
 
         if response.url != url:
             self._log(
